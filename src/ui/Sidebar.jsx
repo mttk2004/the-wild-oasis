@@ -13,12 +13,12 @@ import MainNav from './MainNav.jsx';
 
 const StyledSidebar = styled.aside`
     background-color: var(--color-grey-0);
-    padding: 2rem;
+    padding: 2.4rem .8rem;
     grid-row: 1 / -1;
-		
-		display: flex;
-		flex-direction: column;
-		gap: 3.6rem;
+
+    display: flex;
+    flex-direction: column;
+    gap: 3.6rem;
 `;
 
 function Sidebar() {
