@@ -22,14 +22,26 @@ const StyledAppLayout = styled.div`
 const Main = styled.main`
     background-color: var(--color-grey-50);
     padding: 1rem 2rem;
+		overflow-x: scroll;
 `;
+
+const Container = styled.div`
+    max-width: 100rem;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 3.6rem;
+`
 
 function AppLayout() {
 	return <StyledAppLayout>
 		<Header />
 		<Sidebar />
 		<Main>
+			<Container>
+			
 			<Outlet />
+			</Container>
 		</Main>
 	</StyledAppLayout>;
 }

@@ -17,7 +17,7 @@ import { Toaster }                                from 'react-hot-toast';
 const queryClient = new QueryClient({
 																			defaultOptions: {
 																				queries: {
-																					staleTime: 120_000
+																					staleTime: 0
 																				}
 																			}
 																		});
@@ -45,10 +45,8 @@ function App() {
 		
 		<Toaster
 				position="top-right" gutter={3} toastOptions={{
-			success: {
-				duration: 40000
-			},
-			error  : { duration: 4000 },
+			success: { duration: 3000 },
+			error  : { duration: 3000 },
 			style  : {
 				color          : 'var(--color-grey-700)',
 				backgroundColor: 'var(--color-grey-0)',
