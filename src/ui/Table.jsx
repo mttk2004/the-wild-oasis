@@ -12,7 +12,7 @@ const StyledTable = styled.div`
 
 const CommonRow = styled.div`
   display: grid;
-  grid-template-columns: ${(props) => props.columns};
+  grid-template-columns: ${(props) => props.$columns};
   column-gap: 2.4rem;
   align-items: center;
   transition: none;
@@ -62,31 +62,39 @@ const Empty = styled.p`
 
 const TableContext = createContext(undefined);
 
-function Table({ children, columns }) {
+function Table({ children, $columns }) {
   return (
-    <TableContext.Provider value={{ columns }}>
+    <TableContext.Provider value={{ $columns }}>
       <StyledTable role="table">{children}</StyledTable>
     </TableContext.Provider>
   );
 }
 
 Table.Header = function TableHeader({ children }) {
-  const columns = useContext(TableContext)?.columns;
+  const $columns = useContext(TableContext)?.$columns;
   return (
-    <StyledHeader role="row" columns={columns} as="header">
+    <StyledHeader role="row" $columns={$columns} as="header">
       {children}
     </StyledHeader>
   );
 };
 
-Table.Body = function TableBody({ children }) {
-  return <StyledBody>{children}</StyledBody>;
+Table.Body = function TableBody({ data, render }) {
+  if (!data.length) {
+    return (
+      <Empty role="cell" colSpan="100%">
+        No data available.
+      </Empty>
+    );
+  }
+
+  return <StyledBody>{data.map(render)}</StyledBody>;
 };
 
 Table.Row = function TableRow({ children }) {
-  const columns = useContext(TableContext)?.columns;
+  const $columns = useContext(TableContext)?.$columns;
   return (
-    <StyledRow role="row" columns={columns}>
+    <StyledRow role="row" $columns={$columns}>
       {children}
     </StyledRow>
   );

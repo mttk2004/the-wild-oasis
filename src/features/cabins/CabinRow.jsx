@@ -1,24 +1,14 @@
 import styled from "styled-components";
-import { formatCurrency } from "../../utils/helpers.js";
+
+import CreateCabinForm from "./CreateCabinForm";
+import useDeleteCabin from "./useDeleteCabin";
+import { formatCurrency } from "../../utils/helpers";
 import { HiPencil, HiSquare2Stack, HiTrash } from "react-icons/hi2";
-import useCreateCabin from "./useCreateCabin.js";
-import useDeleteCabin from "./useDeleteCabin.js";
-import CreateCabinForm from "./CreateCabinForm.jsx";
-import Modal from "../../ui/Modal.jsx";
-import ConfirmDelete from "../../ui/ConfirmDelete.jsx";
-import Table from "../../ui/Table.jsx";
-
-// const TableRow = styled.div`
-//   display: grid;
-//   grid-template-columns: 0.6fr 1.8fr 2.2fr 1fr 1fr 1fr;
-//   column-gap: 2.4rem;
-//   align-items: center;
-//   padding: 1.4rem 2.4rem;
-
-//   &:not(:last-child) {
-//     border-bottom: 1px solid var(--color-grey-100);
-//   }
-// `;
+import useCreateCabin from "./useCreateCabin";
+import Modal from "../../ui/Modal";
+import ConfirmDelete from "../../ui/ConfirmDelete";
+import Table from "../../ui/Table";
+import Menus from "../../ui/Menus";
 
 const Img = styled.img`
   display: block;
@@ -48,20 +38,27 @@ const Discount = styled.div`
 `;
 
 function CabinRow({ cabin }) {
-  const { id, name, description, maxCapacity, price, discount, image } = cabin;
   const { isDeleting, deleteCabin } = useDeleteCabin();
   const { isCreating, createCabin } = useCreateCabin();
 
-  const isWorking = isCreating || isDeleting;
+  const {
+    id: cabinId,
+    name,
+    maxCapacity,
+    price,
+    discount,
+    image,
+    description,
+  } = cabin;
 
   function handleDuplicate() {
     createCabin({
-      name: `${name} copy`,
-      description,
+      name: `Copy of ${name}`,
       maxCapacity,
       price,
       discount,
       image,
+      description,
     });
   }
 
@@ -71,37 +68,47 @@ function CabinRow({ cabin }) {
       <Cabin>{name}</Cabin>
       <div>Fits up to {maxCapacity} guests</div>
       <Price>{formatCurrency(price)}</Price>
-      <Discount>{formatCurrency(discount)}</Discount>
+      {discount ? (
+        <Discount>{formatCurrency(discount)}</Discount>
+      ) : (
+        <span>&mdash;</span>
+      )}
       <div>
-        <button disabled={isWorking} onClick={handleDuplicate}>
-          <HiSquare2Stack />
-        </button>
+        <Menus>
+          <Menus.Menu>
+            <Menus.Toggle id={cabinId} />
+            <Modal>
+              <Menus.List id={cabinId}>
+                <Menus.Button
+                  icon={<HiSquare2Stack />}
+                  onClick={handleDuplicate}
+                >
+                  Duplicate
+                </Menus.Button>
 
-        <Modal>
-          <Modal.Open modalName="edit-cabin">
-            <button>
-              <HiPencil />
-            </button>
-          </Modal.Open>
+                <Modal.Open modalName="edit">
+                  <Menus.Button icon={<HiPencil />}>Edit</Menus.Button>
+                </Modal.Open>
 
-          <Modal.Window name="edit-cabin">
-            <CreateCabinForm cabinToEdit={cabin} />
-          </Modal.Window>
+                <Modal.Open modalName="delete">
+                  <Menus.Button icon={<HiTrash />}>Delete</Menus.Button>
+                </Modal.Open>
+              </Menus.List>
 
-          <Modal.Open modalName="delete-confirm">
-            <button>
-              <HiTrash />
-            </button>
-          </Modal.Open>
+              <Modal.Window name="edit">
+                <CreateCabinForm cabinToEdit={cabin} />
+              </Modal.Window>
 
-          <Modal.Window name="delete-confirm">
-            <ConfirmDelete
-              resourceName="cabin"
-              onConfirm={() => deleteCabin(id)}
-              disabled={isWorking}
-            />
-          </Modal.Window>
-        </Modal>
+              <Modal.Window name="delete">
+                <ConfirmDelete
+                  resourceName="cabins"
+                  disabled={isDeleting}
+                  onConfirm={() => deleteCabin(cabinId)}
+                />
+              </Modal.Window>
+            </Modal>
+          </Menus.Menu>
+        </Menus>
       </div>
     </Table.Row>
   );
